@@ -9,11 +9,16 @@ key_paths=("/root/.ssh/systeme_rsa" "/root/.ssh/progial_rsa" "/root/.ssh/id_rsa"
 # Variable pour suivre la clé SSH utilisée
 selected_key=""
 
+# Fonction pour vérifier la connexion SSH avec une clé donnée
+check_ssh_connection() {
+    ssh -o PreferredAuthentications=publickey -i "$1" "$server" exit 2>/dev/null
+    return $?
+}
+
 # Boucle pour trouver la première clé qui ne nécessite pas de mot de passe
 for key_path in "${key_paths[@]}"
 do
-    ssh -o PreferredAuthentications=publickey -i "$key_path" "$server" exit 2>/dev/null
-    if [ $? -eq 0 ]; then
+    if check_ssh_connection "$key_path"; then
         selected_key="$key_path"
         break
     fi
@@ -25,7 +30,6 @@ if [ -n "$selected_key" ]; then
     ssh -i "$selected_key" "$server"
 else
     echo "Échec de la connexion au serveur $server avec les clés SSH disponibles."
-    read -s -p "Veuillez entrer votre mot de passe : 
-" password
+    read -s -p "Veuillez entrer votre mot de passe : " password
     sshpass -p "$password" ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no "$server"
 fi
