@@ -4,7 +4,7 @@
 read -p "Entrez le nom d'hôte ou l'adresse IP du serveur : " server
 
 # Clés SSH disponibles
-key_paths=("/root/.ssh/systeme_rsa" "/root/.ssh/progial_rsa" "/root/.ssh/id_rsa")
+key_paths=("path_key1_rsa" "path_key2_rsa" "path_key3_rsa")
 
 # Variable pour suivre la clé SSH utilisée
 selected_key=""
